@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Laporan Operasional Toko Momoyo</title>
+    <title>Laporan Operasional - MBI Operasional</title>
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
@@ -12,13 +12,13 @@
         }
         .header {
             text-align: center;
-            border-bottom: 2px solid #dc3545;
+            border-bottom: 2px solid #4f46e5;
             padding-bottom: 10px;
             margin-bottom: 15px;
         }
         .header h2 {
             margin: 0;
-            color: #dc3545;
+            color: #4f46e5;
             font-size: 16pt;
             text-transform: uppercase;
         }
@@ -28,7 +28,7 @@
             color: #666;
         }
         .section-title {
-            background-color: #343a40;
+            background-color: #1e293b;
             color: #ffffff;
             padding: 5px 8px;
             font-size: 10pt;
@@ -37,7 +37,7 @@
             margin-bottom: 6px;
         }
         .section-title.danger {
-            background-color: #dc3545;
+            background-color: #4f46e5;
         }
         table {
             width: 100%;
@@ -45,26 +45,17 @@
             margin-bottom: 6px;
         }
         table.bordered th, table.bordered td {
-            border: 1px solid #ccc;
+            border: 1px solid #cbd5e1;
             padding: 5px;
             font-size: 9pt;
         }
         table.bordered th {
-            background-color: #f2f2f2;
+            background-color: #f1f5f9;
             text-align: left;
         }
         .row-info td {
             padding: 4px;
             font-size: 9.5pt;
-        }
-        .badge {
-            display: inline-block;
-            padding: 2px 6px;
-            font-size: 8pt;
-            font-weight: bold;
-            color: #fff;
-            background-color: #6c757d;
-            border-radius: 3px;
         }
         .text-right { text-align: right; }
         .text-center { text-align: center; }
@@ -82,7 +73,7 @@
 <body>
 
     <div class="header">
-        <h2>MOMOYO ICE CREAM & TEA</h2>
+        <h2>MBI OPERASIONAL SYSTEM</h2>
         <p>LAPORAN OPERASIONAL HARIAN TOKO</p>
     </div>
 
