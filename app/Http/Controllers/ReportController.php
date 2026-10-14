@@ -90,48 +90,47 @@ class ReportController extends Controller
     }
 
     public function edit($id)
-{
-    $report = Report::findOrFail($id);
-    $outlets = Outlet::all();
-    
-    return view('reports.edit', compact('report', 'outlets'));
-}
+    {
+        $report = Report::findOrFail($id);
+        $outlets = Outlet::all();
+        
+        return view('reports.edit', compact('report', 'outlets'));
+    }
 
-public function update(Request $request, $id)
-{
-    $report = Report::findOrFail($id);
+    public function update(Request $request, $id)
+    {
+        $report = Report::findOrFail($id);
 
-    $validated = $request->validate([
-        'outlet_id'           => 'required|exists:outlets,id',
-        'report_date'         => 'required|date',
-        'shift'               => 'required|string',
-        'weather'             => 'nullable|string',
-        'sales_finance'       => 'required|array',
-        'sales_finance.actual_sales'     => 'required|numeric',
-        'sales_finance.total_transactions' => 'required|integer',
-        'top_products'        => 'nullable|array',
-        'is_stock_out'        => 'nullable|boolean',
-        'low_stock_items'     => 'nullable|string',
-        'attendances'         => 'nullable|array',
-        'hygiene'             => 'nullable|array',
-        'equipment'           => 'nullable|array',
-        'marketing'           => 'nullable|array',
-        'action_plans'        => 'nullable|array',
-        'performance_rating'  => 'required|string',
-        'key_achievement'     => 'nullable|string',
-        'main_problem'        => 'nullable|string',
-        'action_for_tomorrow' => 'nullable|string',
-        'prepared_by'         => 'required|string',
-        'supervisor_name'     => 'nullable|string',
-        'store_manager_name' => 'nullable|string',
-        'notes'               => 'nullable|string',
-    ]);
+        $validated = $request->validate([
+            'outlet_id'           => 'required|exists:outlets,id',
+            'report_date'         => 'required|date',
+            'shift'               => 'required|string',
+            'weather'             => 'nullable|string',
+            'sales_finance'       => 'required|array',
+            'sales_finance.actual_sales'     => 'required|numeric',
+            'sales_finance.total_transactions' => 'required|integer',
+            'top_products'        => 'nullable|array',
+            'is_stock_out'        => 'nullable|boolean',
+            'low_stock_items'     => 'nullable|string',
+            'attendances'         => 'nullable|array',
+            'hygiene'             => 'nullable|array',
+            'equipment'           => 'nullable|array',
+            'marketing'           => 'nullable|array',
+            'action_plans'        => 'nullable|array',
+            'performance_rating'  => 'required|string',
+            'key_achievement'     => 'nullable|string',
+            'main_problem'        => 'nullable|string',
+            'action_for_tomorrow' => 'nullable|string',
+            'prepared_by'         => 'required|string',
+            'supervisor_name'     => 'nullable|string',
+            'store_manager_name'  => 'nullable|string',
+            'notes'               => 'nullable|string',
+        ]);
 
-    // Update data laporan di database
-    $report->update($validated);
+        $report->update($validated);
 
-    return redirect()->route('reports.index')->with('success', 'Laporan operasional berhasil diperbarui!');
-}
+        return redirect()->route('reports.index')->with('success', 'Laporan operasional berhasil diperbarui!');
+    }
 
     public function destroy($id)
     {
@@ -142,29 +141,33 @@ public function update(Request $request, $id)
     }
 
     public function exportPdf($id)
-{
-    $report = Report::with('outlet')->findOrFail($id);
+    {
+        $report = Report::with('outlet')->findOrFail($id);
 
-    // Format tanggal laporan secara aman
-    $formattedDate = $report->report_date 
-        ? Carbon::parse($report->report_date)->translatedFormat('d F Y') 
-        : '-';
+        $formattedDate = $report->report_date 
+            ? Carbon::parse($report->report_date)->translatedFormat('d F Y') 
+            : '-';
 
-    $pdf = Pdf::loadView('reports.pdf', compact('report', 'formattedDate'))
-        ->setPaper('a4', 'portrait');
+        // Menyesuaikan path publik agar kompatibel dengan struktur public_html Hostinger
+        $publicPath = file_exists(public_path()) ? public_path() : base_path('public_html');
 
-    $filename = 'Laporan_Operasional_' . str_replace(' ', '_', $report->outlet->name ?? 'Momoyo') . '_' . date('Ymd_His') . '.pdf';
+        $pdf = Pdf::setOptions(['public_path' => $publicPath])
+            ->loadView('reports.pdf', compact('report', 'formattedDate'))
+            ->setPaper('a4', 'portrait');
 
-    return $pdf->download($filename);
-}
-public function print($id)
-{
-    $report = Report::with('outlet')->findOrFail($id);
+        $filename = 'Laporan_Operasional_' . str_replace(' ', '_', $report->outlet->name ?? 'MBI') . '_' . date('Ymd_His') . '.pdf';
 
-    $formattedDate = $report->report_date 
-        ? Carbon::parse($report->report_date)->translatedFormat('d F Y') 
-        : '-';
+        return $pdf->download($filename);
+    }
 
-    return view('reports.print', compact('report', 'formattedDate'));
-}
+    public function print($id)
+    {
+        $report = Report::with('outlet')->findOrFail($id);
+
+        $formattedDate = $report->report_date 
+            ? Carbon::parse($report->report_date)->translatedFormat('d F Y') 
+            : '-';
+
+        return view('reports.print', compact('report', 'formattedDate'));
+    }
 }
