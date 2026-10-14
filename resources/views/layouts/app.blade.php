@@ -62,9 +62,25 @@
             padding: 1.5rem 1.15rem;
         }
 
+        /* Custom Label Header Menu yang Jelas */
+        .sidebar-label {
+            color: #cbd5e1 !important; /* Slate 300 - Terang & Jelas */
+            font-size: 10.5px;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .sidebar-subtitle {
+            color: #94a3b8 !important; /* Slate 400 - Terang & Jelas */
+            font-size: 10.5px;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+        }
+
         /* Nav Link Styling with Smooth Transitions */
         .sidebar .nav-link {
-            color: #94a3b8;
+            color: #cbd5e1;
             font-weight: 500;
             padding: 0.8rem 1rem;
             border-radius: 12px;
@@ -77,7 +93,7 @@
 
         .sidebar .nav-link:hover {
             color: #ffffff;
-            background-color: rgba(255, 255, 255, 0.04);
+            background-color: rgba(255, 255, 255, 0.08);
             transform: translateX(4px);
         }
 
@@ -97,8 +113,8 @@
         }
 
         .user-profile-box {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 12px;
             padding: 0.75rem;
         }
@@ -148,12 +164,12 @@
                         <div class="text-white rounded-3 d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 38px; height: 38px; background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); font-size: 1.1rem;">M</div>
                         <div>
                             <h4 class="fw-bold mb-0 text-white" style="font-size: 1.05rem; letter-spacing: 0.5px;">MBI OPERASIONAL</h4>
-                            <span class="text-muted" style="font-size: 10.5px; letter-spacing: 0.8px;">MANAGEMENT SYSTEM</span>
+                            <span class="sidebar-subtitle">MANAGEMENT SYSTEM</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="text-uppercase text-muted fw-bold px-3 mb-2" style="font-size: 10px; letter-spacing: 1px;">Menu Utama</div>
+                <div class="sidebar-label px-3 mb-2">Menu Utama</div>
                 <ul class="nav nav-pills flex-column">
                     <li class="nav-item">
                         <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -167,7 +183,7 @@
                     </li>
 
                     @if(auth()->check() && auth()->user()->role === 'superadmin')
-                        <div class="text-uppercase text-muted fw-bold px-3 mt-4 mb-2" style="font-size: 10px; letter-spacing: 1px;">Master Data</div>
+                        <div class="sidebar-label px-3 mt-4 mb-2">Master Data</div>
                         <li class="nav-item">
                             <a href="{{ route('outlets.index') }}" class="nav-link {{ request()->routeIs('outlets.*') ? 'active' : '' }}">
                                 <i class="bi bi-shop me-3 fs-5"></i> Data Outlet
@@ -198,7 +214,7 @@
 
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="btn btn-dark btn-sm w-100 d-flex align-items-center justify-content-center gap-2 border-0 text-light py-2 rounded-2" style="background-color: rgba(239, 68, 68, 0.12); color: #f87171 !important; transition: all 0.2s;">
+                    <button type="submit" class="btn btn-dark btn-sm w-100 d-flex align-items-center justify-content-center gap-2 border-0 text-light py-2 rounded-2" style="background-color: rgba(239, 68, 68, 0.15); color: #f87171 !important; transition: all 0.2s;">
                         <i class="bi bi-box-arrow-right fs-6"></i> <span class="fw-semibold" style="font-size: 12px;">Keluar Sistem</span>
                     </button>
                 </form>
