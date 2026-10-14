@@ -140,25 +140,21 @@ class ReportController extends Controller
         return redirect()->route('reports.index')->with('success', 'Laporan berhasil dihapus!');
     }
 
-    public function exportPdf($id)
-    {
-        $report = Report::with('outlet')->findOrFail($id);
+public function exportPdf($id)
+{
+    $report = Report::with('outlet')->findOrFail($id);
 
-        $formattedDate = $report->report_date 
-            ? Carbon::parse($report->report_date)->translatedFormat('d F Y') 
-            : '-';
+    $formattedDate = $report->report_date 
+        ? Carbon::parse($report->report_date)->translatedFormat('d F Y') 
+        : '-';
 
-        // Menyesuaikan path publik agar kompatibel dengan struktur public_html Hostinger
-        $publicPath = file_exists(public_path()) ? public_path() : base_path('public_html');
+    $pdf = Pdf::loadView('reports.pdf', compact('report', 'formattedDate'))
+        ->setPaper('a4', 'portrait');
 
-        $pdf = Pdf::setOptions(['public_path' => $publicPath])
-            ->loadView('reports.pdf', compact('report', 'formattedDate'))
-            ->setPaper('a4', 'portrait');
+    $filename = 'Laporan_Operasional_' . str_replace(' ', '_', $report->outlet->name ?? 'MBI') . '_' . date('Ymd_His') . '.pdf';
 
-        $filename = 'Laporan_Operasional_' . str_replace(' ', '_', $report->outlet->name ?? 'MBI') . '_' . date('Ymd_His') . '.pdf';
-
-        return $pdf->download($filename);
-    }
+    return $pdf->download($filename);
+}
 
     public function print($id)
     {
