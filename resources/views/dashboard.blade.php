@@ -1,241 +1,127 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard Operasional Momoyo')
-
 @section('content')
-<!-- BANNER UCAPAN & QUICK ACTIONS -->
-<div class="card bg-danger text-white border-0 shadow-sm mb-4 rounded-3">
-    <div class="card-body p-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
-        <div>
-            <span class="badge bg-white text-danger fw-bold mb-2">MOMOYO OPERATIONAL MANAGEMENT</span>
-            <h3 class="fw-bold mb-1">Selamat Datang, {{ auth()->user()->name ?? 'User' }}!</h3>
-            <p class="mb-0 text-white-50">
-                Hari ini: <strong>{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</strong> | Total Outlet Terdaftar: <strong>{{ $totalOutlets }} Outlet</strong>
-            </p>
-        </div>
-        <div class="d-flex gap-2">
-            <a href="{{ route('reports.create') }}" class="btn btn-light text-danger fw-bold">
-                <i class="bi bi-plus-circle me-1"></i> Buat Laporan Harian
-            </a>
-            @if(auth()->check() && auth()->user()->role === 'superadmin')
-                <a href="{{ route('outlets.index') }}" class="btn btn-outline-light">
-                    <i class="bi bi-shop me-1"></i> Kelola Outlet
+<div class="space-y-8">
+
+    <!-- Banner Welcome MBI Operasional -->
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 p-8 text-white shadow-xl shadow-blue-500/10">
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div>
+                <span class="inline-block px-3 py-1 rounded-full bg-white/20 text-white text-xs font-bold tracking-wider uppercase mb-3 backdrop-blur-md">
+                    MBI OPERATIONAL MANAGEMENT
+                </span>
+                <h2 class="text-3xl font-extrabold tracking-tight">
+                    Selamat Datang, {{ Auth::user()->name }}!
+                </h2>
+                <p class="text-blue-100 mt-1 text-sm">
+                    Hari ini: <span class="font-semibold">{{ now()->translatedFormat('l, d F Y') }}</span> | Total Outlet Terdaftar: <span class="font-semibold">2 Outlet</span>
+                </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <a href="#" class="px-5 py-2.5 rounded-xl bg-white text-blue-600 hover:bg-blue-50 font-bold text-sm shadow-md transition duration-200 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Buat Laporan Harian
                 </a>
-            @endif
+                <a href="#" class="px-5 py-2.5 rounded-xl bg-blue-800/40 hover:bg-blue-800/60 text-white font-semibold text-sm border border-white/20 transition duration-200 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                    Kelola Outlet
+                </a>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- FILTER OUTLET & HEADLINE -->
-<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-    <div>
-        <h4 class="fw-bold text-dark mb-0">Ringkasan Kinerja Toko</h4>
-        <small class="text-muted">Data akumulasi operasional kemarin: <strong>{{ \Carbon\Carbon::parse($yesterday)->translatedFormat('d F Y') }}</strong></small>
-    </div>
+    <!-- Ringkasan Kinerja Section -->
+    <div class="space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h3 class="text-xl font-bold text-slate-900">Ringkasan Kinerja Toko</h3>
+                <p class="text-xs text-slate-500">Data akumulasi operasional kemarin: <span class="font-medium text-slate-700">{{ now()->subDay()->translatedFormat('d F Y') }}</span></p>
+            </div>
+            <div>
+                <select class="bg-white border border-slate-200 text-slate-700 text-sm font-medium rounded-xl px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option>-- Semua Outlet --</option>
+                </select>
+            </div>
+        </div>
 
-    <form action="{{ route('dashboard') }}" method="GET" class="d-flex gap-2">
-        <select name="outlet_id" class="form-select form-select-sm shadow-sm" onchange="this.form.submit()">
-            <option value="">-- Semua Outlet --</option>
-            @foreach($outlets as $outlet)
-                <option value="{{ $outlet->id }}" {{ request('outlet_id') == $outlet->id ? 'selected' : '' }}>
-                    {{ $outlet->name }}
-                </option>
-            @endforeach
-        </select>
-        @if(request('outlet_id'))
-            <a href="{{ route('dashboard') }}" class="btn btn-sm btn-secondary">Reset</a>
-        @endif
-    </form>
-</div>
-
-<!-- KARTU RINGKASAN DATA KEMARIN -->
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="card shadow-sm border-0 border-start border-4 border-danger h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small fw-bold text-uppercase">Actual Sales Kemarin</span>
-                    <i class="bi bi-cash-stack fs-4 text-danger"></i>
+        <!-- Metric Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <!-- Actual Sales -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition duration-200 relative overflow-hidden">
+                <div class="w-1.5 h-full bg-blue-600 absolute left-0 top-0"></div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Actual Sales Kemarin</span>
+                    <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
                 </div>
-                <h3 class="fw-bold text-danger mb-1">Rp {{ number_format($totalActualSales, 0, ',', '.') }}</h3>
-                <small class="text-muted">Target: Rp {{ number_format($totalTargetSales, 0, ',', '.') }}</small>
+                <h4 class="text-2xl font-black text-slate-900">Rp 0</h4>
+                <p class="text-xs text-slate-400 mt-1">Target: Rp 0</p>
             </div>
-        </div>
-    </div>
 
-    <div class="col-md-3">
-        <div class="card shadow-sm border-0 border-start border-4 border-success h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small fw-bold text-uppercase">Pencapaian Target</span>
-                    <i class="bi bi-graph-up-arrow fs-4 text-success"></i>
+            <!-- Target -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition duration-200 relative overflow-hidden">
+                <div class="w-1.5 h-full bg-emerald-500 absolute left-0 top-0"></div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Pencapaian Target</span>
+                    <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                    </div>
                 </div>
-                <h3 class="fw-bold text-success mb-1">{{ $salesAchievementRate }}%</h3>
-                <small class="text-muted">Dari total target harian</small>
+                <h4 class="text-2xl font-black text-emerald-600">0%</h4>
+                <p class="text-xs text-slate-400 mt-1">Dari total target harian</p>
             </div>
-        </div>
-    </div>
 
-    <div class="col-md-3">
-        <div class="card shadow-sm border-0 border-start border-4 border-info h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small fw-bold text-uppercase">Total Transaksi</span>
-                    <i class="bi bi-receipt fs-4 text-info"></i>
+            <!-- Total Transaksi -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition duration-200 relative overflow-hidden">
+                <div class="w-1.5 h-full bg-cyan-500 absolute left-0 top-0"></div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Transaksi</span>
+                    <div class="w-9 h-9 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                    </div>
                 </div>
-                <h3 class="fw-bold text-info mb-1">{{ number_format($totalTransactions, 0, ',', '.') }}</h3>
-                <small class="text-muted">Jumlah struk/transaksi kemarin</small>
+                <h4 class="text-2xl font-black text-slate-900">0</h4>
+                <p class="text-xs text-slate-400 mt-1">Jumlah struk/transaksi kemarin</p>
             </div>
-        </div>
-    </div>
 
-    <div class="col-md-3">
-        <div class="card shadow-sm border-0 border-start border-4 border-warning h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small fw-bold text-uppercase">Laporan Masuk</span>
-                    <i class="bi bi-journal-check fs-4 text-warning"></i>
+            <!-- Laporan Masuk -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition duration-200 relative overflow-hidden">
+                <div class="w-1.5 h-full bg-amber-500 absolute left-0 top-0"></div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Laporan Masuk</span>
+                    <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
                 </div>
-                <h3 class="fw-bold text-warning mb-1">{{ $yesterdayReportCount }}</h3>
-                <small class="text-muted">Total shift terlaporkan kemarin</small>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- PAPAN ALERT & PERHATIAN OPERASIONAL -->
-<div class="row g-3 mb-4">
-    <!-- ALERT STOCK OUT -->
-    <div class="col-md-6">
-        <div class="card shadow-sm border-0 h-100">
-            <div class="card-header bg-dark text-white fw-bold d-flex align-items-center">
-                <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i> Alert Stock Out (Item Habis)
-            </div>
-            <div class="card-body p-0">
-                <ul class="list-group list-group-flush">
-                    @forelse($stockOutAlerts as $alert)
-                        <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                            <div>
-                                <strong class="text-danger">{{ $alert->outlet->name ?? '-' }}</strong>
-                                <small class="text-muted d-block">{{ \Carbon\Carbon::parse($alert->report_date)->format('d/m/Y') }} - Shift {{ $alert->shift }}</small>
-                                <small class="text-dark"><strong>Item Habis:</strong> {{ $alert->low_stock_items ?? 'Bahan habis' }}</small>
-                            </div>
-                            <a href="{{ route('reports.show', $alert->id) }}" class="btn btn-sm btn-outline-secondary">Cek</a>
-                        </li>
-                    @empty
-                        <li class="list-group-item py-3 text-center text-muted">Aman! Tidak ada laporan stock out terbaru.</li>
-                    @endforelse
-                </ul>
+                <h4 class="text-2xl font-black text-amber-500">0</h4>
+                <p class="text-xs text-slate-400 mt-1">Total shift terlapor kemarin</p>
             </div>
         </div>
     </div>
 
-    <!-- ALERT PERFORMA BELOW TARGET -->
-    <div class="col-md-6">
-        <div class="card shadow-sm border-0 h-100">
-            <div class="card-header bg-dark text-white fw-bold d-flex align-items-center">
-                <i class="bi bi-arrow-down-circle-fill text-danger me-2"></i> Performa Shift Membutuhkan Evaluasi
+    <!-- Status Operational Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
             </div>
-            <div class="card-body p-0">
-                <ul class="list-group list-group-flush">
-                    @forelse($belowTargetAlerts as $alert)
-                        <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                            <div>
-                                <strong class="text-dark">{{ $alert->outlet->name ?? '-' }}</strong>
-                                <span class="badge bg-danger ms-1">Below Target</span>
-                                <small class="text-muted d-block">{{ \Carbon\Carbon::parse($alert->report_date)->format('d/m/Y') }} - Shift {{ $alert->shift }}</small>
-                                <small class="text-muted"><strong>Kendala:</strong> {{ Str::limit($alert->main_problem ?? 'Tidak ada catatan', 50) }}</small>
-                            </div>
-                            <a href="{{ route('reports.show', $alert->id) }}" class="btn btn-sm btn-outline-danger">Detail</a>
-                        </li>
-                    @empty
-                        <li class="list-group-item py-3 text-center text-muted">Semua performa shift toko berada dalam kondisi baik.</li>
-                    @endforelse
-                </ul>
+            <div>
+                <h4 class="font-bold text-slate-900 text-sm">Alert Stock Out (Item Habis)</h4>
+                <p class="text-xs text-slate-500 mt-0.5">Aman! Tidak ada laporan stock out terbaru.</p>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+                <h4 class="font-bold text-slate-900 text-sm">Performa Shift Membutuhkan Evaluasi</h4>
+                <p class="text-xs text-slate-500 mt-0.5">Semua performa shift toko berada dalam kondisi baik.</p>
             </div>
         </div>
     </div>
-</div>
 
-<!-- TABEL DAFTAR SEMUA LAPORAN TERBARU -->
-<div class="card shadow-sm border-0 mb-4">
-    <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center fw-bold py-3">
-        <span>Rincian Seluruh Laporan Operasional Harian</span>
-        <a href="{{ route('reports.create') }}" class="btn btn-sm btn-light text-danger fw-bold">+ Buat Laporan Baru</a>
-    </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th width="50" class="text-center">#</th>
-                        <th>Tanggal</th>
-                        <th>Outlet</th>
-                        <th>Shift</th>
-                        <th>Actual Sales</th>
-                        <th>Transaksi</th>
-                        <th>Status Stok</th>
-                        <th>Performance</th>
-                        <th>Dibuat Oleh</th>
-                        <th width="140" class="text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($latestReports as $index => $report)
-                        @php $sales = $report->sales_finance ?? []; @endphp
-                        <tr>
-                            <td class="text-center">{{ $index + 1 + ($latestReports->currentPage() - 1) * $latestReports->perPage() }}</td>
-                            <td>
-                                <strong>{{ \Carbon\Carbon::parse($report->report_date)->format('d/m/Y') }}</strong>
-                            </td>
-                            <td class="fw-bold">{{ $report->outlet->name ?? '-' }}</td>
-                            <td><span class="badge bg-primary">{{ $report->shift }}</span></td>
-                            <td class="fw-bold text-danger">Rp {{ number_format($sales['actual_sales'] ?? 0, 0, ',', '.') }}</td>
-                            <td>{{ number_format($sales['total_transactions'] ?? 0, 0, ',', '.') }} trx</td>
-                            <td>
-                                @if($report->is_stock_out)
-                                    <span class="badge bg-danger">Stock Out</span>
-                                @else
-                                    <span class="badge bg-success">Aman</span>
-                                @endif
-                            </td>
-                            <td>
-                                @php $rating = $report->performance_rating; @endphp
-                                @if($rating === 'Excellent')
-                                    <span class="badge bg-success">Excellent</span>
-                                @elseif($rating === 'Good')
-                                    <span class="badge bg-info text-dark">Good</span>
-                                @elseif($rating === 'Average')
-                                    <span class="badge bg-warning text-dark">Average</span>
-                                @else
-                                    <span class="badge bg-danger">Below Target</span>
-                                @endif
-                            </td>
-                            <td>{{ $report->prepared_by }}</td>
-                            <td class="text-center">
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <a href="{{ route('reports.show', $report->id) }}" class="btn btn-outline-danger" title="Lihat Detail">
-                                        Detail
-                                    </a>
-                                    <a href="{{ route('reports.print', $report->id) }}" target="_blank" class="btn btn-outline-secondary" title="Cetak">
-                                        🖨️
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="10" class="text-center py-4 text-muted">Belum ada laporan operasional yang terdaftar.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- PAGINATION -->
-<div class="d-flex justify-content-end mb-4">
-    {{ $latestReports->links() }}
 </div>
 @endsection
