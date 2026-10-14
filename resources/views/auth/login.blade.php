@@ -14,8 +14,12 @@
                 <p class="text-sm text-slate-300 mt-1">Silakan masuk ke akun Anda</p>
             </div>
 
-            <!-- Session Status -->
-            <x-auth-session-status class="mb-4" :status="session('status')" />
+            <!-- Session Status (Fixed) -->
+            @if (session('status'))
+                <div class="mb-4 text-sm font-medium text-green-400 bg-green-900/50 p-3 rounded-xl border border-green-700">
+                    {{ session('status') }}
+                </div>
+            @endif
 
             <form method="POST" action="{{ route('login') }}" class="space-y-5">
                 @csrf
